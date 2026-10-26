@@ -38,22 +38,33 @@ silently turn it into a flake output.
 
 ## First install
 
-1. Install NixOS (the graphical ISO is easiest), then clone this repository:
+1. Boot the NixOS installer, connect to the network, and clone this
+   repository. A fresh install already has `/etc/nixos`, so move it aside
+   first:
 
    ```sh
-   sudo git clone <your-repo-url> /etc/nixos
+   sudo mv /etc/nixos /etc/nixos.orig
+   sudo git clone https://github.com/yasir1-bot/nixos-config.git /etc/nixos
+   sudo chown -R "$USER":"$(id -gn)" /etc/nixos
    cd /etc/nixos
    ```
 
-   If you clone somewhere else, update `flakeDir` in `variables.nix` and use
-   the real path in the commands below.
+   If you would rather keep the clone in your home directory, clone it there
+   and set `flakeDir` in `variables.nix` to the full path instead.
 
-2. Generate the hardware configuration for **this** machine:
+2. Generate the hardware configuration for **this** machine and copy it into
+   the repository:
 
    ```sh
+   # Switching an existing system:
    sudo nixos-generate-config --root /
    sudo cp /etc/nixos/hardware-configuration.nix \
-     /etc/nixos/hosts/nixos/hardware-configuration.nix
+     hosts/nixos/hardware-configuration.nix
+
+   # Installing onto /mnt from the ISO:
+   # sudo nixos-generate-config --root /mnt
+   # sudo cp /mnt/etc/nixos/hardware-configuration.nix \
+   #   hosts/nixos/hardware-configuration.nix
    ```
 
    The checked-in `hosts/nixos/hardware-configuration.nix` is a placeholder
@@ -74,6 +85,12 @@ silently turn it into a flake output.
 
    ```sh
    sudo nixos-rebuild switch --flake /etc/nixos#nixos
+   ```
+
+   When installing from the ISO instead, finish with:
+
+   ```sh
+   sudo nixos-install --flake /etc/nixos#nixos --root /mnt
    ```
 
    The flake attribute is `#<hostname>` from `variables.nix`.
