@@ -1,0 +1,13 @@
+# Build output
+result
+result-*
+
+# Nix / direnv
+.direnv/
+.nix-portable/
+
+# Editor and OS noise
+*.swp
+*.swo
+*~
+.DS_Store
